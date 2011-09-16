@@ -40,7 +40,7 @@ class Cart(models.Model):
     def price(self):
         price = Decimal('0.00')
         for item in self.items.all():
-            if item.can_be_bought:
+            if item.is_selected:
                 price += item.total_price
         return price
 
@@ -92,7 +92,7 @@ class CartItem(models.Model):
         return getattr(self.product, 'is_in_stock', True)
 
     @property
-    def can_be_bought(self):
+    def is_selected(self):
         return self.is_available and self.is_in_stock and not self.is_held
 
     @property
