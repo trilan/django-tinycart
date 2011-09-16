@@ -14,7 +14,7 @@ setup(
     description = 'Just a shopping cart for your Django projects.',
     long_description = read('README.rst'),
     author = 'Mike Yumatov',
-    author_email = 'mike@yumatov.com',
+    author_email = 'mike@yumatov.org',
     packages = find_packages(),
     test_suite = 'tests.main',
 )
