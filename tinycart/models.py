@@ -19,7 +19,7 @@ class CartManager(models.Manager):
                 return self.get(pk=request.session['cart'])
             except self.model.DoesNotExist:
                 pass
-        cart = self.get_or_create(user=None)[0]
+        cart = self.create(user=None)
         request.session['cart'] = cart.pk
         return cart
 

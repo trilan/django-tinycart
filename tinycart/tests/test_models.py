@@ -26,6 +26,10 @@ class CartModelTests(TestCase):
         self.assertEqual(self.request.session['cart'], cart.pk)
         self.assertEqual(Cart.objects.get_for_request(self.request), cart)
 
+        self.request.session = {}
+        Cart.objects.get_for_request(self.request)
+        self.assertFalse(cart.pk==self.request.session['cart'])
+
     def test_cart_for_authenticated_user(self):
         self.request.user = User.objects.create_user('john', 'john@example.com')
         cart = Cart.objects.get_for_request(self.request)
