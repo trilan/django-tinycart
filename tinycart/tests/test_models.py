@@ -37,6 +37,16 @@ class CartModelTests(TestCase):
         self.assertNotIn('cart', self.request.session)
         self.assertEqual(Cart.objects.get_for_request(self.request), cart)
 
+    def test_reset_cached_items(self):
+        cart = Cart.objects.get_for_request(self.request)
+        self.assertEqual(len(cart.cached_items), 0)
+
+        cart.add(Book.objects.create())
+        self.assertEqual(len(cart.cached_items), 0)
+
+        cart.reset_cached_items()
+        self.assertEqual(len(cart.cached_items), 1)
+
     def test_cart_add(self):
         cart = Cart.objects.get_for_request(self.request)
         cart_item = cart.add(Shirt.objects.create())

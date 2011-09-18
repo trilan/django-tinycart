@@ -35,6 +35,10 @@ class Cart(models.Model):
     def __init__(self, *args, **kwargs):
         super(Cart, self).__init__(*args, **kwargs)
         self.modifiers = SortedDict()
+        self.reset_cached_items()
+
+    def reset_cached_items(self):
+        self.cached_items = self.items.all()
 
     @property
     def price(self):
