@@ -40,6 +40,23 @@ class Cart(models.Model):
     def reset_cached_items(self):
         self.cached_items = self.items.all()
 
+    def get_selected_items(self):
+        return [item for item in self.cached_items if item.is_selected]
+
+    def get_held_items(self):
+        held_items = []
+        for item in self.cached_items:
+            if item.is_available and item.is_in_stock and item.is_held:
+                held_items.append(item)
+        return held_items
+
+    def get_unavailable_items(self):
+        unavailable_items = []
+        for item in self.cached_items:
+            if not item.is_available or not item.is_in_stock:
+                unavailable_items.append(item)
+        return unavailable_items
+
     @property
     def price(self):
         price = Decimal('0.00')
