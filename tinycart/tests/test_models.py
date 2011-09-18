@@ -41,7 +41,7 @@ class CartModelTests(TestCase):
         cart = Cart.objects.get_for_request(self.request)
         self.assertEqual(len(cart.cached_items), 0)
 
-        cart.add(Book.objects.create())
+        cart.items.create(product=Book.objects.create())
         self.assertEqual(len(cart.cached_items), 0)
 
         cart.reset_cached_items()
@@ -53,6 +53,7 @@ class CartModelTests(TestCase):
         cart.add(cart_item.product, quantity=5)
         self.assertEqual(cart.items.count(), 1)
         self.assertEqual(cart.items.get().quantity, 6)
+        self.assertEqual(len(cart.cached_items), 1)
 
     def test_cart_price(self):
         cart = Cart.objects.get_for_request(self.request)

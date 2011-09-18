@@ -81,6 +81,7 @@ class Cart(models.Model):
         if not created:
             item.quantity += quantity
             item.save()
+        self.reset_cached_items()
         return item
 
 
