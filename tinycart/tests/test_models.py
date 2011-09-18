@@ -1,3 +1,4 @@
+from __future__ import with_statement
 from decimal import Decimal
 
 from django.conf import settings
@@ -75,6 +76,13 @@ class CartModelTests(TestCase):
         cart_item.is_held = True
         cart_item.save()
         self.assertEqual(cart.price, Decimal('45.00'))
+
+    def test_cart_price_queries_count(self):
+        cart = Cart.objects.get_for_request(self.request)
+        cart.add(Book.objects.create())
+        cart.price
+        with self.assertNumQueries(0):
+            cart.price
 
 
 class CartItemModelTests(TestCase):

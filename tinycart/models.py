@@ -60,9 +60,8 @@ class Cart(models.Model):
     @property
     def price(self):
         price = Decimal('0.00')
-        for item in self.items.all():
-            if item.is_selected:
-                price += item.total_price
+        for item in self.get_selected_items():
+            price += item.total_price
         return price
 
     @property
