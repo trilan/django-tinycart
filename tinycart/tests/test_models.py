@@ -58,31 +58,31 @@ class CartModelTests(TestCase):
 
     def test_cart_price(self):
         cart = Cart.objects.get_for_request(self.request)
-        self.assertEqual(cart.price, Decimal('0.00'))
+        self.assertEqual(cart.get_price(), Decimal('0.00'))
 
         cart.add(Book.objects.create(storage_on_hand=10), quantity=10)
-        self.assertEqual(cart.price, Decimal('35.00'))
+        self.assertEqual(cart.get_price(), Decimal('35.00'))
 
         cart.add(Shirt.objects.create())
-        self.assertEqual(cart.price, Decimal('45.00'))
+        self.assertEqual(cart.get_price(), Decimal('45.00'))
 
         cart.add(Book.objects.create(storage_on_hand=10, is_available=False))
-        self.assertEqual(cart.price, Decimal('45.00'))
+        self.assertEqual(cart.get_price(), Decimal('45.00'))
 
         cart.add(Book.objects.create(storage_on_hand=0))
-        self.assertEqual(cart.price, Decimal('45.00'))
+        self.assertEqual(cart.get_price(), Decimal('45.00'))
 
         cart_item = cart.add(Book.objects.create(storage_on_hand=10))
         cart_item.is_held = True
         cart_item.save()
-        self.assertEqual(cart.price, Decimal('45.00'))
+        self.assertEqual(cart.get_price(), Decimal('45.00'))
 
     def test_cart_price_queries_count(self):
         cart = Cart.objects.get_for_request(self.request)
         cart.add(Book.objects.create())
-        cart.price
+        cart.get_price()
         with self.assertNumQueries(0):
-            cart.price
+            cart.get_price()
 
 
 class CartItemModelTests(TestCase):
@@ -110,20 +110,20 @@ class CartItemModelTests(TestCase):
 
     def test_cart_item_price(self):
         cart_item = self.cart.add(Book.objects.create())
-        self.assertEqual(cart_item.price, Decimal('3.50'))
+        self.assertEqual(cart_item.get_price(), Decimal('3.50'))
 
         cart_item = self.cart.add(Book.objects.create(), quantity=3)
-        self.assertEqual(cart_item.price, Decimal('10.50'))
+        self.assertEqual(cart_item.get_price(), Decimal('10.50'))
 
     def test_cart_item_total_price(self):
         cart_item = self.cart.add(Book.objects.create())
-        self.assertEqual(cart_item.total_price, Decimal('3.50'))
+        self.assertEqual(cart_item.get_total_price(), Decimal('3.50'))
 
         cart_item.quantity += 1
-        self.assertEqual(cart_item.total_price, Decimal('3.50'))
+        self.assertEqual(cart_item.get_total_price(), Decimal('3.50'))
 
         cart_item.quantity += 1
-        self.assertEqual(cart_item.total_price, Decimal('7.00'))
+        self.assertEqual(cart_item.get_total_price(), Decimal('7.00'))
 
     def test_cart_item_is_available(self):
         cart_item = self.cart.add(Book.objects.create())

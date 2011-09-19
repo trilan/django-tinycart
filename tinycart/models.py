@@ -57,16 +57,14 @@ class Cart(models.Model):
                 unavailable_items.append(item)
         return unavailable_items
 
-    @property
-    def price(self):
+    def get_price(self):
         price = Decimal('0.00')
         for item in self.get_selected_items():
-            price += item.total_price
+            price += item.get_total_price()
         return price
 
-    @property
-    def total_price(self):
-        total_price = self.price
+    def get_total_price(self):
+        total_price = self.get_price()
         for modifier in get_cart_modifiers():
             total_price = modifier(self, total_price)
         return total_price
@@ -120,14 +118,12 @@ class CartItem(models.Model):
     def unit_price(self):
         return self.product.price
 
-    @property
-    def price(self):
+    def get_price(self):
         return self.unit_price * self.quantity
 
-    @property
-    def total_price(self):
+    def get_total_price(self):
         self.modifiers.clear()
-        total_price = self.price
+        total_price = self.get_price()
         for modifier in get_cart_item_modifiers():
             total_price = modifier(self, total_price)
         return total_price
