@@ -103,6 +103,21 @@ class CartModelTests(TestCase):
         cart.add(Book.objects.create(storage_on_hand=10))
         self.assertEqual(cart.get_total_price(), Decimal('3.15'))
 
+    def test_cart_clear(self):
+        cart = Cart.objects.get_for_request(self.request)
+        cart.add(Book.objects.create(storage_on_hand=10))
+        cart.add(Shirt.objects.create())
+        self.assertEqual(len(cart.cached_items), 2)
+        self.assertEqual(cart.get_price(), Decimal('13.50'))
+        self.assertEqual(cart.get_total_price(), Decimal('12.15'))
+        self.assertEqual(len(cart.modifiers), 1)
+
+        cart.clear()
+        self.assertEqual(len(cart.modifiers), 0)
+        self.assertEqual(len(cart.cached_items), 0)
+        self.assertEqual(cart.get_price(), Decimal('0.00'))
+        self.assertEqual(cart.get_total_price(), Decimal('0.00'))
+
 
 class CartItemModelTests(TestCase):
 

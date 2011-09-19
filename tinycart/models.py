@@ -81,6 +81,11 @@ class Cart(models.Model):
         self.reset_cached_items()
         return item
 
+    def clear(self):
+        self.items.all().delete()
+        self.modifiers.clear()
+        self.reset_cached_items()
+
 
 class CartItem(models.Model):
 
