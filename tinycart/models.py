@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.datastructures import SortedDict
 
-from .cart_modifiers.loader import get_cart_item_modifiers
+from .cart_modifiers.loader import get_cart_modifiers, get_cart_item_modifiers
 
 
 class CartManager(models.Manager):

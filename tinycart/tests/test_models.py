@@ -7,7 +7,7 @@ from django.test import TestCase, RequestFactory
 
 from tinycart.models import Cart
 from tinycart.cart_modifiers.loader import (
-    get_cart_item_modifiers, clear_cart_item_modifiers_cache)
+    clear_cart_item_modifiers_cache, clear_cart_modifiers_cache)
 
 from .models import Book, Shirt
 
@@ -15,10 +15,24 @@ from .models import Book, Shirt
 class CartModelTests(TestCase):
 
     def setUp(self):
+        if hasattr(settings, 'TINYCART_CART_MODIFIERS'):
+            self.old_TINYCART_CART_MODIFIERS = settings.TINYCART_CART_MODIFIERS
+        settings.TINYCART_CART_MODIFIERS = (
+            'tinycart.tests.cart_modifiers.ten_percent_discount',
+        )
+        clear_cart_modifiers_cache()
+
         self.factory = RequestFactory()
         self.request = self.factory.get('/')
         self.request.user = AnonymousUser()
         self.request.session = {}
+
+    def tearDown(self):
+        delattr(settings, 'TINYCART_CART_MODIFIERS')
+        if hasattr(self, 'old_TINYCART_CART_MODIFIERS'):
+            settings.TINYCART_CART_MODIFIERS = self.old_TINYCART_CART_MODIFIERS
+            delattr(self, 'old_TINYCART_CART_MODIFIERS')
+        clear_cart_modifiers_cache()
 
     def test_cart_for_anonymous_user(self):
         cart = Cart.objects.get_for_request(self.request)
@@ -83,6 +97,11 @@ class CartModelTests(TestCase):
         cart.get_price()
         with self.assertNumQueries(0):
             cart.get_price()
+
+    def test_cart_total_price(self):
+        cart = Cart.objects.get_for_request(self.request)
+        cart.add(Book.objects.create(storage_on_hand=10))
+        self.assertEqual(cart.get_total_price(), Decimal('3.15'))
 
 
 class CartItemModelTests(TestCase):
