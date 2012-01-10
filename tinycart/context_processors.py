@@ -1,2 +1,2 @@
 def cart(request):
-    {'cart': request.cart}
+    return {'cart': request.cart}
