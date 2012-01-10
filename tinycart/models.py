@@ -95,7 +95,7 @@ class CartItem(models.Model):
     product_id = models.PositiveIntegerField()
     product = generic.GenericForeignKey('product_type', 'product_id')
 
-    quantity = models.PositiveIntegerField(default=False)
+    quantity = models.PositiveIntegerField(default=1)
     is_held = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
 
