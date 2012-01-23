@@ -69,11 +69,11 @@ class Cart(models.Model):
             total_price = modifier(self, total_price)
         return total_price
 
-    def add(self, product, quantity=1):
+    def add(self, product, quantity=1, is_held=False):
         item, created = self.items.get_or_create(
             product_type = ContentType.objects.get_for_model(product),
             product_id = product.pk,
-            defaults = {'quantity': quantity},
+            defaults = {'quantity': quantity, 'is_held': is_held},
         )
         if not created:
             item.quantity += quantity

@@ -70,6 +70,11 @@ class CartModelTests(TestCase):
         self.assertEqual(cart.items.get().quantity, 6)
         self.assertEqual(len(cart.cached_items), 1)
 
+    def test_cart_add_held(self):
+        cart = Cart.objects.get_for_request(self.request)
+        cart_item = cart.add(Shirt.objects.create(), is_held=True)
+        self.assertTrue(cart_item.is_held)
+
     def test_cart_price(self):
         cart = Cart.objects.get_for_request(self.request)
         self.assertEqual(cart.get_price(), Decimal('0.00'))
