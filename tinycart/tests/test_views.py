@@ -14,9 +14,7 @@ class CartItemListTests(TestCase):
         self.request = self.create_request()
 
         self.held_book = Book.objects.create()
-        self.held_item = self.request.cart.add(self.held_book)
-        self.held_item.is_held = True
-        self.held_item.save()
+        self.held_item = self.request.cart.add(self.held_book, is_held=True)
 
         self.available_book = Book.objects.create()
         self.available_item = self.request.cart.add(self.available_book)
