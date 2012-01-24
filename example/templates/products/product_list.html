@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load tinycart %}
+{% load url from future %}
+
+{% block page_title %}Products{% endblock %}
+{% block page_body %}
+  {% for object in object_list %}
+    <div>
+      <form action="{% url 'tinycart_cart_item_list' %}" method="post">{% csrf_token %}
+        {{ object.name }}, ${{ object.price|floatformat:2 }}
+        <input type="hidden" name="product_id" value="{{ object.pk }}">
+        <input type="hidden" name="product_type" value="{{ object|content_type_pk }}">
+        <input type="submit" value="Add to cart">
+      </form>
+    </div>
+  {% endfor %}
+{% endblock %}

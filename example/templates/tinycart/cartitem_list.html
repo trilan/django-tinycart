@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block page_title %}Cart{% endblock %}
+
+{% block page_body %}
+  <h1>Cart</h1>
+
+  <h2>Available products</h2>
+  <table border="1">
+    <tr>
+      <th>Name</th>
+      <th>Quantity</th>
+      <th>Total Price</th>
+    </tr>
+    {% for object in available_object_list %}
+      <tr>
+        <td>{{ object.product.name }}</td>
+        <td>{{ object.quantity }}</td>
+        <td>${{ object.get_total_price }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
