@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, RequestFactory
 
 from tinycart.models import Cart
@@ -8,6 +9,16 @@ from .models import Book
 
 
 class CartItemListTests(TestCase):
+
+    def create_request(self, method, data=None):
+        request = getattr(RequestFactory(), method)('/cart/', data=data or {})
+        request.user = AnonymousUser()
+        request.session = {}
+        request.cart = Cart.objects.get_for_request(request)
+        return request
+
+
+class CartItemListGetTests(CartItemListTests):
 
     def setUp(self):
         self.view = CartItemList.as_view()
@@ -23,14 +34,44 @@ class CartItemListTests(TestCase):
         self.unavailable_item = self.request.cart.add(self.unavailable_book)
 
     def create_request(self):
-        request = RequestFactory().get('/cart/')
-        request.user = AnonymousUser()
-        request.session = {}
-        request.cart = Cart.objects.get_for_request(request)
-        return request
+        return super(CartItemListGetTests, self).create_request('get')
 
     def test_context_data(self):
         c = self.view(self.request).context_data
         self.assertEqual(c['held_object_list'], [self.held_item])
         self.assertEqual(c['available_object_list'], [self.available_item])
         self.assertEqual(c['unavailable_object_list'], [self.unavailable_item])
+
+
+class CartItemListPostTests(CartItemListTests):
+
+    def setUp(self):
+        self.view = CartItemList.as_view()
+        self.book = Book.objects.create()
+
+    def create_request(self, data=None):
+        return super(CartItemListPostTests, self).create_request('post', data)
+
+    def test_add_to_cart(self):
+        request = self.create_request({
+            'product_id': self.book.pk,
+            'product_type': ContentType.objects.get_for_model(Book).pk})
+        response = self.view(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(request.cart.items.count(), 1)
+
+        item = request.cart.items.get()
+        self.assertEqual(item.product, self.book)
+        self.assertEqual(item.quantity, 1)
+        self.assertFalse(item.is_held)
+
+    def test_add_to_cart_with_quantity(self):
+        request = self.create_request({
+            'product_id': self.book.pk,
+            'product_type': ContentType.objects.get_for_model(Book).pk,
+            'quantity': 5})
+        response = self.view(request)
+        self.assertEqual(response.status_code, 302)
+
+        item = request.cart.items.get()
+        self.assertEqual(item.quantity, 5)

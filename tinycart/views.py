@@ -1,4 +1,8 @@
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import redirect
 from django.views.generic import ListView
+
+from .forms import CartItemForm
 from .models import Cart
 
 
@@ -26,3 +30,12 @@ class CartItemList(ListView):
 
     def get(self, request, *args, **kwargs):
         return super(CartItemList, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = CartItemForm(request.POST)
+        if form.is_valid():
+            form.add_to_cart(request.cart)
+            if request.is_ajax():
+                return HttpResponse(status=201)
+            return redirect('tinycart_cart_item_list')
+        return HttpResponseBadRequest()
