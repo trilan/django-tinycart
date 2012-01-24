@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import redirect
-from django.views.generic import ListView
+from django.shortcuts import redirect, get_object_or_404
+from django.views.generic import ListView, View
 
 from .forms import CartItemForm
 from .models import Cart
@@ -39,3 +39,18 @@ class CartItemList(ListView):
                 return HttpResponse(status=201)
             return redirect('tinycart_cart_item_list')
         return HttpResponseBadRequest()
+
+
+class CartItemDetail(View):
+
+    def get_queryset(self):
+        return self.request.cart.items.all()
+
+    def get_object(self):
+        return get_object_or_404(self.get_queryset(), pk=self.args[0])
+
+    def delete(self, request, *args, **kwargs):
+        self.get_object().delete()
+        if request.is_ajax():
+            return HttpResponse(status=204)
+        return redirect('tinycart_cart_item_list')

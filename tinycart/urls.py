@@ -6,4 +6,7 @@ urlpatterns = patterns('',
     url(r'^$',
         views.CartItemList.as_view(),
         name='tinycart_cart_item_list'),
+    url(r'^(\d+)/$',
+        views.CartItemDetail.as_view(),
+        name='tinycart_cart_item_detail'),
 )

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block page_title %}Cart{% endblock %}
 
@@ -11,12 +12,18 @@
       <th>Name</th>
       <th>Quantity</th>
       <th>Total Price</th>
+      <th>Delete</th>
     </tr>
     {% for object in available_object_list %}
       <tr>
         <td>{{ object.product.name }}</td>
         <td>{{ object.quantity }}</td>
         <td>${{ object.get_total_price }}</td>
+        <td><form action="{% url 'tinycart_cart_item_detail' object.pk %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="_method" value="delete">
+          <input type="submit" value="Delete">
+        </form></td>
       </tr>
     {% endfor %}
   </table>

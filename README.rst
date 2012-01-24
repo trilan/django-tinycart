@@ -17,7 +17,8 @@ Installation
 
 1. ``pip install git://github.com/trilan/django-tinycart.git#egg=django-tinycart``
 2. Add ``'tinycart'`` to your ``INSTALLED_APPS`` setting.
-3. Add ``'tinycart.middleware.CartMiddleware'`` to ``MIDDLEWARE_CLASSES``.
+3. Add ``'tinycart.middleware.HTTPMethodOverrideMiddleware'`` and
+   ``'tinycart.middleware.CartMiddleware'`` to ``MIDDLEWARE_CLASSES``.
 4. Add ``'tinycart.context_processors.cart'`` to
    ``TEMPLATE_CONTEXT_PROCESSORS``.
 5. Add app urls to your project URLConf::
