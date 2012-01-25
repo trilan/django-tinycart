@@ -19,7 +19,7 @@
         <td>{{ object.product.name }}</td>
         <td>{{ object.quantity }}</td>
         <td>${{ object.get_total_price }}</td>
-        <td><form action="{% url 'tinycart_cart_item_detail' object.pk %}" method="post">
+        <td><form action="{% url 'tinycart_cart_item_detail' pk=object.pk %}" method="post">
           {% csrf_token %}
           <input type="hidden" name="_method" value="delete">
           <input type="submit" value="Delete">
