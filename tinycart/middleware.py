@@ -17,7 +17,10 @@ class HTTPMethodOverrideMiddleware(object):
                               'multipart/form-data')
 
     def is_webform(self, request):
-        return request.META.get('CONTENT_TYPE') in self.webform_content_types
+        content_type = request.META.get('CONTENT_TYPE')
+        if not content_type:
+            return False
+        return content_type.split(';')[0] in self.webform_content_types
 
     def process_request(self, request):
         if request.method != 'POST':
