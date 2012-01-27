@@ -17,7 +17,10 @@
     {% for object in available_object_list %}
       <tr>
         <td>{{ object.product.name }}</td>
-        <td>{{ object.quantity }}</td>
+        <td><form action="{% url 'tinycart_cart_item_detail' pk=object.pk %}" method="post">
+          <input type="text" name="quantity" value="{{ object.quantity }}">
+          <input type="hidden" name="_method" value="put">
+        </form></td>
         <td>${{ object.get_total_price }}</td>
         <td><form action="{% url 'tinycart_cart_item_detail' pk=object.pk %}" method="post">
           {% csrf_token %}

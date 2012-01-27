@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 
+from .models import CartItem
+
 
 class CartItemForm(forms.Form):
 
@@ -29,3 +31,15 @@ class CartItemForm(forms.Form):
         return cart.add(self.cleaned_data['product'],
                         self.cleaned_data['quantity'],
                         self.cleaned_data['is_held'])
+
+
+class UpdateCartItemForm(forms.ModelForm):
+
+    class Meta:
+        model = CartItem
+        fields = ('quantity', 'is_held')
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateCartItemForm, self).__init__(*args, **kwargs)
+        self.fields['quantity'].required = False
+        self.fields['is_held'].required = False

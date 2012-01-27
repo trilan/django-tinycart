@@ -3,7 +3,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, View
 from django.views.generic.detail import SingleObjectMixin
 
-from .forms import CartItemForm
+from .forms import CartItemForm, UpdateCartItemForm
 from .models import Cart
 
 
@@ -46,6 +46,15 @@ class CartItemDetail(SingleObjectMixin, View):
 
     def get_queryset(self):
         return self.request.cart.items.all()
+
+    def put(self, request, *args, **kwargs):
+        form = UpdateCartItemForm(request.POST, instance=self.get_object())
+        if form.is_valid():
+            form.save()
+            if request.is_ajax():
+                return HttpResponse(status=200)
+            return redirect('tinycart_cart_item_list')
+        return HttpResponseBadRequest()
 
     def delete(self, request, *args, **kwargs):
         self.get_object().delete()
