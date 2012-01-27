@@ -29,9 +29,6 @@ class CartItemList(ListView):
                 context['unavailable_object_list'].append(object)
         return context
 
-    def get(self, request, *args, **kwargs):
-        return super(CartItemList, self).get(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         form = CartItemForm(request.POST)
         if form.is_valid():
