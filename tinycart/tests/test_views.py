@@ -3,12 +3,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, RequestFactory
 
 from tinycart.models import Cart
-from tinycart.views import CartItemList
+from tinycart.views import CartItemListView
 
 from .models import Book
 
 
-class CartItemListTests(TestCase):
+class CartItemListViewTests(TestCase):
 
     def create_request(self, method, data=None):
         request = getattr(RequestFactory(), method)('/cart/', data=data or {})
@@ -18,10 +18,10 @@ class CartItemListTests(TestCase):
         return request
 
 
-class CartItemListGetTests(CartItemListTests):
+class CartItemListViewGetTests(CartItemListViewTests):
 
     def setUp(self):
-        self.view = CartItemList.as_view()
+        self.view = CartItemListView.as_view()
         self.request = self.create_request()
 
         self.held_book = Book.objects.create()
@@ -34,7 +34,7 @@ class CartItemListGetTests(CartItemListTests):
         self.unavailable_item = self.request.cart.add(self.unavailable_book)
 
     def create_request(self):
-        return super(CartItemListGetTests, self).create_request('get')
+        return super(CartItemListViewGetTests, self).create_request('get')
 
     def test_context_data(self):
         c = self.view(self.request).context_data
@@ -43,14 +43,14 @@ class CartItemListGetTests(CartItemListTests):
         self.assertEqual(c['unavailable_object_list'], [self.unavailable_item])
 
 
-class CartItemListPostTests(CartItemListTests):
+class CartItemListViewPostTests(CartItemListViewTests):
 
     def setUp(self):
-        self.view = CartItemList.as_view()
+        self.view = CartItemListView.as_view()
         self.book = Book.objects.create()
 
     def create_request(self, data=None):
-        return super(CartItemListPostTests, self).create_request('post', data)
+        return super(CartItemListViewPostTests, self).create_request('post', data)
 
     def test_add_to_cart(self):
         request = self.create_request({

@@ -7,13 +7,13 @@ from .forms import CartItemForm, UpdateCartItemForm
 from .models import Cart
 
 
-class CartItemList(ListView):
+class CartItemListView(ListView):
 
     def get_queryset(self):
         return self.request.cart.items.all()
 
     def get_context_data(self, **kwargs):
-        context = super(CartItemList, self).get_context_data(**kwargs)
+        context = super(CartItemListView, self).get_context_data(**kwargs)
         context.update({
             'available_object_list': [],
             'unavailable_object_list': [],
@@ -39,7 +39,7 @@ class CartItemList(ListView):
         return HttpResponseBadRequest()
 
 
-class CartItemDetail(SingleObjectMixin, View):
+class CartItemDetailView(SingleObjectMixin, View):
 
     def get_queryset(self):
         return self.request.cart.items.all()
