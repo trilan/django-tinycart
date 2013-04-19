@@ -1,12 +1,15 @@
 from decimal import Decimal
 
-from django.contrib.auth.models import User, AnonymousUser
+from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.datastructures import SortedDict
 
 from .cart_modifiers.loader import get_cart_modifiers, get_cart_item_modifiers
+
+
+USER_MODULE_PATH = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
 class CartManager(models.Manager):
@@ -26,7 +29,7 @@ class CartManager(models.Manager):
 
 class Cart(models.Model):
 
-    user = models.OneToOneField(User, null=True, blank=True)
+    user = models.OneToOneField(USER_MODULE_PATH, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
